@@ -1,0 +1,54 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+package org.opensearch.security.ssl.util;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.cert.CertificateException;
+
+public class KeystoreProps {
+    private final String filePath;
+    private final String type;
+    private final char[] password;
+
+    public KeystoreProps(String filePath, String type, String password) {
+        this.filePath = filePath;
+        this.type = type;
+        this.password = Utils.toCharArray(password);
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public char[] getPassword() {
+        return password;
+    }
+
+    public KeyStore loadKeystore() throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, NoSuchProviderException {
+        System.out.println("KeyStore Type "+ type);
+        final KeyStore ts = KeyStore.getInstance(type,"BCFIPS");
+//        final KeyStore ts = KeyStore.getInstance("BCFKS", "BCFIPS");
+        System.out.println("KeyStore Type "+ ts.getType());
+        ts.load(new FileInputStream(new File(filePath)), password);
+        return ts;
+    }
+}
